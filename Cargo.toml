@@ -48,16 +48,16 @@ default = [
 
 [dependencies]
 num-traits = { version = "0.2.14", optional = true }
-iced_style = { git = "https://github.com/yusdacra/iced.git", rev = "416c4f4f263a60c2e7fc255d3e38dcf743a8218d" }
+iced_style = { git = "https://github.com/yusdacra/iced.git", rev = "97ea2687c42beee2100dc11a2f344e5d7a554e2b" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-iced_native = { git = "https://github.com/yusdacra/iced.git", rev = "416c4f4f263a60c2e7fc255d3e38dcf743a8218d" }
-iced_graphics = { git = "https://github.com/yusdacra/iced.git", rev = "416c4f4f263a60c2e7fc255d3e38dcf743a8218d" }
+iced_native = { git = "https://github.com/yusdacra/iced.git", rev = "97ea2687c42beee2100dc11a2f344e5d7a554e2b" }
+iced_graphics = { git = "https://github.com/yusdacra/iced.git", rev = "97ea2687c42beee2100dc11a2f344e5d7a554e2b" }
 chrono = { version = "0.4.19", optional = true }
 lazy_static = { version = "1.4.0", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-iced_web = { git = "https://github.com/yusdacra/iced.git", rev = "416c4f4f263a60c2e7fc255d3e38dcf743a8218d" }
+iced_web = { git = "https://github.com/yusdacra/iced.git", rev = "97ea2687c42beee2100dc11a2f344e5d7a554e2b" }
 dodrio = "0.2.0"
 wasm-bindgen = "0.2.69"
 
