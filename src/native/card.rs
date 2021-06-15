@@ -3,7 +3,9 @@
 //! *This API requires the following crate features to be activated: card*
 use std::hash::Hash;
 
-use iced_native::{event, touch, Clipboard, Element, Event, Layout, Length, Point, Size, Widget};
+use iced_native::{
+    event, touch, Clipboard, Element, Event, Layout, Length, Padding, Point, Size, Widget,
+};
 use iced_native::{mouse, Align};
 
 use crate::core::renderer::DrawEnvironment;
@@ -38,12 +40,12 @@ pub struct Card<'a, Message, Renderer: self::Renderer> {
     max_width: u32,
     /// The maximum height of the [`Card`](Card).
     max_height: u32,
-    /// The padding of teh head fo the [`Card`](Card).
-    padding_head: f32,
+    /// The padding of the head of the [`Card`](Card).
+    padding_head: Padding,
     /// The padding of the body of the [`Card`](Card).
-    padding_body: f32,
+    padding_body: Padding,
     /// The padding of the foot of the [`Card`](Card).
-    padding_foot: f32,
+    padding_foot: Padding,
     /// The optional size of the close icon of the [`Card`](Card).
     close_size: Option<f32>,
     /// The optional message that is send if the close icon of the [`Card`](Card) is pressed.
@@ -74,14 +76,15 @@ where
         H: Into<Element<'a, Message, Renderer>>,
         B: Into<Element<'a, Message, Renderer>>,
     {
+        let default_padding = Padding::new(<Renderer as self::Renderer>::DEFAULT_PADDING as u16);
         Card {
             width: Length::Fill,
             height: Length::Shrink,
             max_width: u32::MAX,
             max_height: u32::MAX,
-            padding_head: <Renderer as self::Renderer>::DEFAULT_PADDING,
-            padding_body: <Renderer as self::Renderer>::DEFAULT_PADDING,
-            padding_foot: <Renderer as self::Renderer>::DEFAULT_PADDING,
+            padding_head: default_padding,
+            padding_body: default_padding,
+            padding_foot: default_padding,
             close_size: None,
             on_close: None,
             head: head.into(),
@@ -129,7 +132,7 @@ where
     ///
     /// This will set the padding of the head, body and foot to the
     /// same value.
-    pub fn padding(mut self, padding: f32) -> Self {
+    pub fn padding(mut self, padding: Padding) -> Self {
         self.padding_head = padding;
         self.padding_body = padding;
         self.padding_foot = padding;
@@ -137,19 +140,19 @@ where
     }
 
     /// Sets the padding of the head of the [`Card`](Card).
-    pub fn padding_head(mut self, padding: f32) -> Self {
+    pub fn padding_head(mut self, padding: Padding) -> Self {
         self.padding_head = padding;
         self
     }
 
     /// Sets the padding of the body of the [`Card`](Card).
-    pub fn padding_body(mut self, padding: f32) -> Self {
+    pub fn padding_body(mut self, padding: Padding) -> Self {
         self.padding_body = padding;
         self
     }
 
     /// Sets the padding of the foot of the [`Card`](Card).
-    pub fn padding_foot(mut self, padding: f32) -> Self {
+    pub fn padding_foot(mut self, padding: Padding) -> Self {
         self.padding_foot = padding;
         self
     }
@@ -365,7 +368,7 @@ fn head_node<'a, Message, Renderer>(
     renderer: &Renderer,
     limits: &iced_native::layout::Limits,
     head: &Element<'a, Message, Renderer>,
-    padding: f32,
+    padding: Padding,
     width: Length,
     on_close: bool,
     close_size: Option<f32>,
@@ -392,13 +395,19 @@ where
     let mut head = head.layout(renderer, &limits);
     let mut size = limits.resolve(head.size());
 
-    head.move_to(Point::new(padding, padding));
+    head.move_to(Point::new(
+        f32::from(padding.horizontal()) / 2.0,
+        f32::from(padding.vertical()) / 2.0,
+    ));
     head.align(Align::Start, Align::Center, head.size());
 
     if let Some(node) = close.as_mut() {
         size = Size::new(size.width + close_size, size.height);
 
-        node.move_to(Point::new(size.width - padding, padding));
+        node.move_to(Point::new(
+            size.width - f32::from(padding.horizontal()) / 2.0,
+            f32::from(padding.vertical()) / 2.0,
+        ));
         node.align(Align::End, Align::Center, node.size())
     }
 
@@ -416,7 +425,7 @@ fn body_node<'a, Message, Renderer>(
     renderer: &Renderer,
     limits: &iced_native::layout::Limits,
     body: &Element<'a, Message, Renderer>,
-    padding: f32,
+    padding: Padding,
     width: Length,
 ) -> iced_native::layout::Node
 where
@@ -432,7 +441,10 @@ where
     let mut body = body.layout(renderer, &limits);
     let size = limits.resolve(body.size());
 
-    body.move_to(Point::new(padding, padding));
+    body.move_to(Point::new(
+        f32::from(padding.horizontal()) / 2.0,
+        f32::from(padding.vertical()) / 2.0,
+    ));
     body.align(Align::Start, Align::Start, size);
 
     iced_native::layout::Node::with_children(size.pad(padding), vec![body])
@@ -443,7 +455,7 @@ fn foot_node<'a, Message, Renderer>(
     renderer: &Renderer,
     limits: &iced_native::layout::Limits,
     foot: &Element<'a, Message, Renderer>,
-    padding: f32,
+    padding: Padding,
     width: Length,
 ) -> iced_native::layout::Node
 where
@@ -459,7 +471,10 @@ where
     let mut foot = foot.layout(renderer, &limits);
     let size = limits.resolve(foot.size());
 
-    foot.move_to(Point::new(padding, padding));
+    foot.move_to(Point::new(
+        f32::from(padding.horizontal()) / 2.0,
+        f32::from(padding.vertical()) / 2.0,
+    ));
     foot.align(Align::Start, Align::Center, size);
 
     iced_native::layout::Node::with_children(size.pad(padding), vec![foot])

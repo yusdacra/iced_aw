@@ -8,8 +8,8 @@ use iced_native::{
     layout::{Limits, Node},
     mouse, row, text,
     text_input::{self, cursor, Value},
-    Align, Clipboard, Column, Container, Element, Hasher, Layout, Length, Point, Rectangle, Row,
-    Size, Text, TextInput, Widget,
+    Align, Clipboard, Column, Container, Element, Hasher, Layout, Length, Padding, Point,
+    Rectangle, Row, Size, Text, TextInput, Widget,
 };
 use num_traits::{Num, NumAssignOps};
 use std::fmt::Display;
@@ -51,7 +51,7 @@ pub struct NumberInput<'a, T, Message, Renderer: self::Renderer> {
     /// The min and max value of the [`NumberInput`](NumberInput).
     bounds: (T, T),
     /// The content padding of the [`NumberInput`](NumberInput).
-    padding: u16,
+    padding: Padding,
     /// The text size of the [`NumberInput`](NumberInput).
     size: Option<u16>,
     /// The underlying element of the [`NumberInput`](NumberInput).
@@ -87,7 +87,7 @@ where
             mod_state,
         } = state;
 
-        let padding = <Renderer as self::Renderer>::DEFAULT_PADDING;
+        let padding = Padding::new(<Renderer as self::Renderer>::DEFAULT_PADDING);
         let convert_to_num = move |s: String| {
             on_changed(T::from_str(&s).unwrap_or(if s.is_empty() { T::zero() } else { value }))
         };
@@ -166,9 +166,9 @@ where
     }
 
     /// Sets the padding of the [`NumberInput`].
-    pub fn padding(mut self, units: u16) -> Self {
-        self.padding = units;
-        self.content = self.content.padding(units);
+    pub fn padding(mut self, padding: Padding) -> Self {
+        self.padding = padding;
+        self.content = self.content.padding(padding);
         self
     }
 
@@ -245,11 +245,10 @@ where
     }
 
     fn layout(&self, renderer: &Renderer, limits: &Limits) -> Node {
-        let padding = f32::from(self.padding);
         let limits = limits
             .width(self.width())
             .height(Length::Shrink)
-            .pad(padding);
+            .pad(self.padding);
         let content = self.content.layout(renderer, &limits.loose());
         let txt_size = self.size.unwrap_or_else(|| renderer.default_size());
         let icon_size = txt_size * 3 / 4;
@@ -258,7 +257,9 @@ where
                 .center_y()
                 .center_x()
         };
-        let mut modifier = if self.padding < Renderer::DEFAULT_PADDING {
+        let mut modifier = if (self.padding.vertical() + self.padding.horizontal()) / 2
+            < Renderer::DEFAULT_PADDING
+        {
             Row::<(), Renderer>::new()
                 .spacing(1)
                 .width(Length::Shrink)
@@ -601,6 +602,7 @@ pub trait Renderer: text_input::Renderer {
 
     #[allow(clippy::too_many_arguments)]
     /// Draws a [`NumberInput`].
+    #[allow(clippy::too_many_arguments)]
     fn draw(
         &mut self,
         cursor_position: Point,

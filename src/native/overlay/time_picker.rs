@@ -23,11 +23,11 @@ use iced_native::{
     button, column, container, event, keyboard,
     layout::{self, Limits},
     mouse, overlay, row, text, touch, Align, Button, Clipboard, Column, Container, Element, Event,
-    Layout, Length, Point, Row, Text, Widget,
+    Layout, Length, Padding, Point, Row, Text, Widget,
 };
 
 /// The padding around the elements.
-const PADDING: u16 = 10;
+const PADDING: Padding = Padding::new(10);
 /// The spacing between the elements.
 const SPACING: u16 = 15;
 /// The spacing between the buttons.
@@ -496,7 +496,7 @@ where
         position: Point,
     ) -> iced_native::layout::Node {
         let limits = Limits::new(Size::ZERO, bounds)
-            .pad(f32::from(PADDING))
+            .pad(PADDING)
             .width(Length::Fill)
             .height(Length::Fill)
             .max_width(300)
@@ -524,14 +524,14 @@ where
             .layout(renderer, &limits);
 
         clock.move_to(Point::new(
-            clock.bounds().x + f32::from(PADDING),
-            clock.bounds().y + f32::from(PADDING),
+            clock.bounds().x + f32::from(PADDING.horizontal()) / 2.0,
+            clock.bounds().y + f32::from(PADDING.vertical()) / 2.0,
         ));
 
         digital_clock.move_to(Point::new(
-            digital_clock.bounds().x + f32::from(PADDING),
+            digital_clock.bounds().x + f32::from(PADDING.horizontal()) / 2.0,
             digital_clock.bounds().y
-                + f32::from(PADDING)
+                + f32::from(PADDING.vertical()) / 2.0
                 + f32::from(SPACING)
                 + clock.bounds().height,
         ));
@@ -550,31 +550,31 @@ where
         let mut submit_button = self.submit_button.layout(renderer, &submit_limits);
 
         cancel_button.move_to(Point {
-            x: cancel_button.bounds().x + f32::from(PADDING),
+            x: cancel_button.bounds().x + f32::from(PADDING.horizontal()) / 2.0,
             y: cancel_button.bounds().y
                 + clock.bounds().height
-                + f32::from(PADDING)
+                + f32::from(PADDING.vertical()) / 2.0
                 + digital_clock.bounds().height
                 + 2.0 * f32::from(SPACING),
         });
 
         submit_button.move_to(Point {
             x: submit_button.bounds().x + clock.bounds().width - submit_button.bounds().width
-                + f32::from(PADDING),
+                + f32::from(PADDING.horizontal()) / 2.0,
             y: submit_button.bounds().y
                 + clock.bounds().height
-                + f32::from(PADDING)
+                + f32::from(PADDING.vertical()) / 2.0
                 + digital_clock.bounds().height
                 + 2.0 * f32::from(SPACING),
         });
 
         let mut node = layout::Node::with_children(
             Size::new(
-                clock.bounds().width + (2.0 * f32::from(PADDING)),
+                clock.bounds().width + f32::from(PADDING.horizontal()),
                 clock.bounds().height
                     + digital_clock.bounds().height
                     + cancel_button.bounds().height
-                    + (2.0 * f32::from(PADDING))
+                    + f32::from(PADDING.vertical())
                     + 2.0 * f32::from(SPACING),
             ),
             vec![clock, digital_clock, cancel_button, submit_button],

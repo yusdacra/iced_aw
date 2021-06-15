@@ -8,7 +8,7 @@ use iced_native::{
     button, column, event, keyboard,
     layout::{self, Limits},
     mouse, overlay, row, text, text_input, touch, Align, Button, Clipboard, Color, Column, Element,
-    Event, Layout, Length, Point, Rectangle, Row, Size, Text, Widget,
+    Event, Layout, Length, Padding, Point, Rectangle, Row, Size, Text, Widget,
 };
 
 use crate::{
@@ -18,7 +18,7 @@ use crate::{
 };
 
 /// The padding around the elements.
-const PADDING: u16 = 10;
+const PADDING: Padding = Padding::new(10);
 /// The spacing between the element.
 const SPACING: u16 = 15;
 /// The spacing between the buttons.
@@ -532,7 +532,7 @@ where
         };
 
         let limits = Limits::new(Size::ZERO, bounds)
-            .pad(f32::from(PADDING))
+            .pad(PADDING)
             .width(Length::Fill)
             .height(Length::Fill)
             .max_width(max_width)
@@ -758,7 +758,7 @@ where
         .height(Length::Fill);
 
     let mut block1_node = Column::<(), Renderer>::new()
-        .spacing(PADDING)
+        .spacing(PADDING.vertical() / 2)
         .push(
             Row::new()
                 .width(Length::Fill)
@@ -772,8 +772,8 @@ where
         .layout(renderer, &block1_limits);
 
     block1_node.move_to(Point::new(
-        bounds.x + f32::from(PADDING),
-        bounds.y + f32::from(PADDING),
+        bounds.x + f32::from(PADDING.horizontal()) / 2.0,
+        bounds.y + f32::from(PADDING.vertical()) / 2.0,
     ));
 
     block1_node
@@ -809,7 +809,7 @@ where
     let mut hex_text = Row::<(), Renderer>::new()
         .width(Length::Fill)
         .height(Length::Units(
-            text::Renderer::default_size(renderer) + 2 * PADDING,
+            text::Renderer::default_size(renderer) + PADDING.vertical(),
         ))
         .layout(renderer, &hex_text_limits);
 
@@ -849,14 +849,17 @@ where
     let mut rgba_colors = rgba_colors.layout(renderer, &block2_limits);
 
     rgba_colors.move_to(Point::new(
-        rgba_colors.bounds().x + f32::from(PADDING),
-        rgba_colors.bounds().y + f32::from(PADDING),
+        rgba_colors.bounds().x + f32::from(PADDING.horizontal()) / 2.0,
+        rgba_colors.bounds().y + f32::from(PADDING.vertical()) / 2.0,
     ));
 
     // Hex text
     hex_text.move_to(Point::new(
-        hex_text.bounds().x + f32::from(PADDING),
-        hex_text.bounds().y + rgba_colors.bounds().height + f32::from(PADDING) + f32::from(SPACING),
+        hex_text.bounds().x + f32::from(PADDING.horizontal()) / 2.0,
+        hex_text.bounds().y
+            + rgba_colors.bounds().height
+            + f32::from(PADDING.vertical()) / 2.0
+            + f32::from(SPACING),
     ));
 
     // Buttons
@@ -873,31 +876,31 @@ where
     let mut submit_button = color_picker.submit_button.layout(renderer, &submit_limits);
 
     cancel_button.move_to(Point::new(
-        cancel_button.bounds().x + f32::from(PADDING),
+        cancel_button.bounds().x + f32::from(PADDING.horizontal()) / 2.0,
         cancel_button.bounds().y
             + rgba_colors.bounds().height
             + hex_text.bounds().height
-            + f32::from(PADDING)
+            + f32::from(PADDING.vertical()) / 2.0
             + 2.0 * f32::from(SPACING),
     ));
 
     submit_button.move_to(Point::new(
         submit_button.bounds().x + rgba_colors.bounds().width - submit_button.bounds().width
-            + f32::from(PADDING),
+            + f32::from(PADDING.horizontal()) / 2.0,
         submit_button.bounds().y
             + rgba_colors.bounds().height
             + hex_text.bounds().height
-            + f32::from(PADDING)
+            + f32::from(PADDING.vertical()) / 2.0
             + 2.0 * f32::from(SPACING),
     ));
 
     let mut block2_node = layout::Node::with_children(
         Size::new(
-            rgba_colors.bounds().width + (2.0 * f32::from(PADDING)),
+            rgba_colors.bounds().width + f32::from(PADDING.horizontal()),
             rgba_colors.bounds().height
                 + hex_text.bounds().height
                 + cancel_button.bounds().height
-                + (2.0 * f32::from(PADDING))
+                + f32::from(PADDING.vertical())
                 + (2.0 * f32::from(SPACING)),
         ),
         vec![rgba_colors, hex_text, cancel_button, submit_button],

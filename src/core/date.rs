@@ -346,53 +346,77 @@ mod tests {
 
     #[test]
     fn position_to_day_test() {
-        let (day, is_in_month) = position_to_day(0, 0, 2020, 12);
-        assert_eq!(day, 30);
-        assert_eq!(is_in_month, IsInMonth::Previous);
+        {
+            let (day, is_in_month) = position_to_day(0, 0, 2020, 12);
+            assert_eq!(day, 30);
+            assert_eq!(is_in_month, IsInMonth::Previous);
+        }
 
-        let (day, is_in_month) = position_to_day(1, 0, 2020, 12);
-        assert_eq!(day, 1);
-        assert_eq!(is_in_month, IsInMonth::Same);
+        {
+            let (day, is_in_month) = position_to_day(1, 0, 2020, 12);
+            assert_eq!(day, 1);
+            assert_eq!(is_in_month, IsInMonth::Same);
+        }
 
-        let (day, is_in_month) = position_to_day(3, 4, 2020, 12);
-        assert_eq!(day, 31);
-        assert_eq!(is_in_month, IsInMonth::Same);
+        {
+            let (day, is_in_month) = position_to_day(3, 4, 2020, 12);
+            assert_eq!(day, 31);
+            assert_eq!(is_in_month, IsInMonth::Same);
+        }
 
-        let (day, is_in_month) = position_to_day(6, 5, 2020, 12);
-        assert_eq!(day, 10);
-        assert_eq!(is_in_month, IsInMonth::Next);
+        {
+            let (day, is_in_month) = position_to_day(6, 5, 2020, 12);
+            assert_eq!(day, 10);
+            assert_eq!(is_in_month, IsInMonth::Next);
+        }
 
-        let (day, is_in_month) = position_to_day(0, 0, 2020, 11);
-        assert_eq!(day, 26);
-        assert_eq!(is_in_month, IsInMonth::Previous);
+        {
+            let (day, is_in_month) = position_to_day(0, 0, 2020, 11);
+            assert_eq!(day, 26);
+            assert_eq!(is_in_month, IsInMonth::Previous);
+        }
 
-        let (day, is_in_month) = position_to_day(6, 0, 2020, 11);
-        assert_eq!(day, 1);
-        assert_eq!(is_in_month, IsInMonth::Same);
+        {
+            let (day, is_in_month) = position_to_day(6, 0, 2020, 11);
+            assert_eq!(day, 1);
+            assert_eq!(is_in_month, IsInMonth::Same);
+        }
 
-        let (day, is_in_month) = position_to_day(0, 5, 2020, 11);
-        assert_eq!(day, 30);
-        assert_eq!(is_in_month, IsInMonth::Same);
+        {
+            let (day, is_in_month) = position_to_day(0, 5, 2020, 11);
+            assert_eq!(day, 30);
+            assert_eq!(is_in_month, IsInMonth::Same);
+        }
 
-        let (day, is_in_month) = position_to_day(6, 5, 2020, 11);
-        assert_eq!(day, 6);
-        assert_eq!(is_in_month, IsInMonth::Next);
+        {
+            let (day, is_in_month) = position_to_day(6, 5, 2020, 11);
+            assert_eq!(day, 6);
+            assert_eq!(is_in_month, IsInMonth::Next);
+        }
 
-        let (day, is_in_month) = position_to_day(0, 0, 2021, 2);
-        assert_eq!(day, 25);
-        assert_eq!(is_in_month, IsInMonth::Previous);
+        {
+            let (day, is_in_month) = position_to_day(0, 0, 2021, 2);
+            assert_eq!(day, 25);
+            assert_eq!(is_in_month, IsInMonth::Previous);
+        }
 
-        let (day, is_in_month) = position_to_day(0, 1, 2021, 2);
-        assert_eq!(day, 1);
-        assert_eq!(is_in_month, IsInMonth::Same);
+        {
+            let (day, is_in_month) = position_to_day(0, 1, 2021, 2);
+            assert_eq!(day, 1);
+            assert_eq!(is_in_month, IsInMonth::Same);
+        }
 
-        let (day, is_in_month) = position_to_day(6, 4, 2021, 2);
-        assert_eq!(day, 28);
-        assert_eq!(is_in_month, IsInMonth::Same);
+        {
+            let (day, is_in_month) = position_to_day(6, 4, 2021, 2);
+            assert_eq!(day, 28);
+            assert_eq!(is_in_month, IsInMonth::Same);
+        }
 
-        let (day, is_in_month) = position_to_day(0, 5, 2021, 2);
-        assert_eq!(day, 1);
-        assert_eq!(is_in_month, IsInMonth::Next);
+        {
+            let (day, is_in_month) = position_to_day(0, 5, 2021, 2);
+            assert_eq!(day, 1);
+            assert_eq!(is_in_month, IsInMonth::Next);
+        }
     }
 
     #[test]

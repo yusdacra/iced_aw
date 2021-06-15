@@ -7,8 +7,8 @@ use std::marker::PhantomData;
 use iced_native::{
     event,
     layout::{self, Limits, Node},
-    overlay, Align, Clipboard, Element, Event, Hasher, Layout, Length, Point, Rectangle, Size,
-    Widget,
+    overlay, Align, Clipboard, Element, Event, Hasher, Layout, Length, Padding, Point, Rectangle,
+    Size, Widget,
 };
 
 /// A container that distributes its contents horizontally.
@@ -27,7 +27,7 @@ pub struct Wrap<'a, Message, Renderer, Direction> {
     /// The maximum height of the [`Wrap`](Wrap)
     pub max_height: u32,
     /// The padding of each element of the [`Wrap`](Wrap).
-    pub padding: u16,
+    pub padding: Padding,
     /// The spacing between each element of the [`Wrap`](Wrap).
     pub spacing: u16,
     /// The spacing between each line of the [`Wrap`](Wrap).
@@ -102,8 +102,8 @@ impl<'a, Message, Renderer, Direction> Wrap<'a, Message, Renderer, Direction> {
 
     /// Sets the padding of the elements in the [`Wrap`](Wrap).
     #[must_use]
-    pub const fn padding(mut self, units: u16) -> Self {
-        self.padding = units;
+    pub const fn padding(mut self, padding: Padding) -> Self {
+        self.padding = padding;
         self
     }
 
@@ -269,7 +269,7 @@ impl<'a, Message, Renderer, Direction> Default for Wrap<'a, Message, Renderer, D
             height: Length::Shrink,
             max_width: u32::MAX,
             max_height: u32::MAX,
-            padding: 0,
+            padding: 0.into(),
             spacing: 0,
             line_spacing: 0,
             line_minimal_length: 10,
@@ -303,21 +303,19 @@ where
     #[allow(clippy::inline_always)]
     #[inline(always)]
     fn inner_layout(&self, renderer: &Renderer, limits: &Limits) -> Node {
-        let padding = f32::from(self.padding);
         let spacing = f32::from(self.spacing);
         let line_spacing = f32::from(self.line_spacing);
-        #[allow(clippy::cast_precision_loss)] // TODO: possible precision loss
         let line_minimal_length = self.line_minimal_length as f32;
         let limits = limits
-            .pad(padding)
+            .pad(self.padding)
             .width(self.width)
             .height(self.height)
             .max_width(self.max_width)
             .max_height(self.max_height);
         let max_width = limits.max().width;
 
-        let mut curse = padding;
-        let mut deep_curse = padding;
+        let mut curse = f32::from(self.padding.horizontal()) / 2.0;
+        let mut deep_curse = f32::from(self.padding.vertical()) / 2.0;
         let mut current_line_height = line_minimal_length;
         let mut max_main = curse;
         let mut align = vec![];
@@ -344,8 +342,8 @@ where
                     start = end;
                     end += 1;
                     current_line_height = line_minimal_length;
-                    node.move_to(Point::new(padding, deep_curse));
-                    curse = offset_init + padding;
+                    node.move_to(Point::new(f32::from(self.padding.horizontal()) / 2.0, deep_curse));
+                    curse = offset_init + f32::from(self.padding.horizontal()) / 2.0;
                 } else {
                     node.move_to(Point::new(curse, deep_curse));
                     curse = offset;
@@ -368,12 +366,12 @@ where
             });
         });
         let (width, height) = (
-            max_main - padding,
-            deep_curse - padding + current_line_height,
+            max_main - f32::from(self.padding.horizontal()) / 2.0,
+            deep_curse - f32::from(self.padding.vertical()) / 2.0 + current_line_height,
         );
         let size = limits.resolve(Size::new(width, height));
 
-        Node::with_children(size.pad(padding), nodes)
+        Node::with_children(size.pad(self.padding), nodes)
     }
 
     #[allow(clippy::inline_always)]
@@ -397,21 +395,19 @@ where
     #[allow(clippy::inline_always)]
     #[inline(always)]
     fn inner_layout(&self, renderer: &Renderer, limits: &Limits) -> Node {
-        let padding = f32::from(self.padding);
         let spacing = f32::from(self.spacing);
         let line_spacing = f32::from(self.line_spacing);
-        #[allow(clippy::cast_precision_loss)] // TODO: possible precision loss
         let line_minimal_length = self.line_minimal_length as f32;
         let limits = limits
-            .pad(padding)
+            .pad(self.padding)
             .width(self.width)
             .height(self.height)
             .max_width(self.max_width)
             .max_height(self.max_height);
         let max_height = limits.max().height;
 
-        let mut curse = padding;
-        let mut wide_curse = padding;
+        let mut curse = f32::from(self.padding.vertical()) / 2.0;
+        let mut wide_curse = f32::from(self.padding.horizontal()) / 2.0;
         let mut current_line_width = line_minimal_length;
         let mut max_main = curse;
         let mut align = vec![];
@@ -438,8 +434,8 @@ where
                     start = end;
                     end += 1;
                     current_line_width = line_minimal_length;
-                    node.move_to(Point::new(wide_curse, padding));
-                    curse = offset_init + padding;
+                    node.move_to(Point::new(wide_curse, f32::from(self.padding.vertical()) / 2.0));
+                    curse = offset_init + f32::from(self.padding.horizontal()) / 2.0;
                 } else {
                     node.move_to(Point::new(wide_curse, curse));
                     end += 1;
@@ -463,12 +459,12 @@ where
         });
 
         let (width, height) = (
-            wide_curse - padding + current_line_width,
-            max_main - padding,
+            wide_curse - f32::from(self.padding.horizontal()) / 2.0 + current_line_width,
+            max_main - f32::from(self.padding.vertical()) / 2.0,
         );
         let size = limits.resolve(Size::new(width, height));
 
-        Node::with_children(size.pad(padding), nodes)
+        Node::with_children(size.pad(self.padding), nodes)
     }
 
     #[allow(clippy::inline_always)]

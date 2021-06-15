@@ -4,7 +4,8 @@
 use std::hash::Hash;
 
 use iced_native::{
-    event, layout, Align, Clipboard, Element, Event, Layout, Length, Point, Rectangle, Widget,
+    event, layout, Align, Clipboard, Element, Event, Layout, Length, Padding, Point, Rectangle,
+    Widget,
 };
 
 use crate::core::renderer::DrawEnvironment;
@@ -26,7 +27,7 @@ use crate::core::renderer::DrawEnvironment;
 #[allow(missing_debug_implementations)]
 pub struct Badge<'a, Message, Renderer: self::Renderer> {
     /// The padding of the [`Badge`].
-    padding: u16,
+    padding: Padding,
     /// The width of the [`Badge`].
     width: Length,
     /// The height of the [`Badge`].
@@ -54,7 +55,7 @@ where
         T: Into<Element<'a, Message, Renderer>>,
     {
         Badge {
-            padding: 7,
+            padding: Padding::new(7),
             width: Length::Shrink,
             height: Length::Shrink,
             horizontal_alignment: Align::Center,
@@ -65,8 +66,8 @@ where
     }
 
     /// Sets the padding of the [`Badge`](Badge).
-    pub fn padding(mut self, units: u16) -> Self {
-        self.padding = units;
+    pub fn padding(mut self, padding: Padding) -> Self {
+        self.padding = padding;
         self
     }
 
@@ -118,21 +119,22 @@ where
         renderer: &Renderer,
         limits: &iced_native::layout::Limits,
     ) -> iced_native::layout::Node {
-        let padding = f32::from(self.padding);
-
         let limits = limits
             .loose()
             .width(self.width)
             .height(self.height)
-            .pad(padding);
+            .pad(self.padding);
 
         let mut content = self.content.layout(renderer, &limits.loose());
         let size = limits.resolve(content.size());
 
-        content.move_to(Point::new(padding, padding));
+        content.move_to(Point::new(
+            f32::from(self.padding.horizontal()) / 2.0,
+            f32::from(self.padding.vertical()) / 2.0,
+        ));
         content.align(self.horizontal_alignment, self.vertical_alignment, size);
 
-        layout::Node::with_children(size.pad(padding), vec![content])
+        layout::Node::with_children(size.pad(self.padding), vec![content])
     }
 
     fn on_event(
